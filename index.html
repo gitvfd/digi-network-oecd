@@ -134,10 +134,10 @@ ul {
     <p class="search_title">Search <input type="text" class="text-input" id="search" value="" /></p>
   </form>-->
 </div>
-<h1>OECD Digitalisation ecosystem</h1>
-<h2>A transversal work</h2>
+<h1>OECD Going Digital ecosystem</h1>
+<h2>Horizontal project</h2>
 <div id="toolbar">
-<div class="button  active" id="gd">GD Framework </div>
+<div class="button  active" id="gd">Framework </div>
 <div class="button " id="committee">Committee </div>
 <div class="button " id="project">Project</div>
 </div>
@@ -193,7 +193,7 @@ else if(width>=450 &width>600)
 else
   height=4*width/3;
 
-var heightLeg=50;
+var heightLeg=60;
 
 
 var wrapWidth = width/8;
@@ -208,7 +208,7 @@ var svg = d3.select("#chart").append("svg")
 
 
 
-var color = d3.scaleOrdinal().domain(["Committee","Project","GD Framework level 1","GD Framework level 2"]).range(["#142f4e","#00b1b2",/**"#dcdf5a"**/"#e5e785","#c2c626"]);
+var color = d3.scaleOrdinal().domain(["Committee","Project","GD Framework level 1","GD Framework level 2"]).range(["#142f4e","#00b1b2","#c2c626",/**"#dcdf5a"**/"#e5e785"]);
 
 
 
@@ -221,7 +221,7 @@ var simulation = d3.forceSimulation()
     .force("x", d3.forceX(0))
 
 
-var dataLegend=[{name:"Committee"},{name:"Project"},{name:"GD Framework level 1"},{name:"GD Framework level 2"}]
+var dataLegend=[{name:"GD Framework level 1"},{name:"GD Framework level 2"},{name:"Committee"},{name:"Project"}]
 
 var nodeLegend = svglegend
   .selectAll("g")
@@ -233,10 +233,10 @@ var nodeLegend = svglegend
   })
   .attr("transform",function(d,i){
         i++;
-        return "translate("+i*width/6 + ","+heightLeg/5 + ")"
+        return "translate("+i*width/6 + ","+heightLeg/4 + ")"
       });
 
-  var radiusLegend=heightLeg/5
+  var radiusLegend=heightLeg/4
   nodeLegend.append("circle")
     .attr("r", radiusLegend)
     .attr("fill", function(d) { return color(d.name); })
@@ -252,6 +252,11 @@ var nodeLegend = svglegend
     .attr("x",0)
     .attr("y",radiusLegend+10)
     .text(function(d){
+      if(d.name=="GD Framework level 1")
+        return "Framework level 1";
+      else if(d.name=="GD Framework level 2")
+        return "Framework level 2";
+      else
       return d.name;
     })
     .call(wrap,wrapWidth);
@@ -678,7 +683,7 @@ function setupButtons() {
               });
         }else if (buttonId== "gd"){
 
-          document.getElementById("list").innerHTML = 'GD Frameworks';
+          document.getElementById("list").innerHTML = 'Going Digital Framework';
 
           changeNodeSize("gd")
           toplist = d3.select("#list").append("ul");
