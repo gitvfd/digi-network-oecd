@@ -1,0 +1,963 @@
+<!--look at https://d3plus.org/examples/advanced/9956648/-->
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+body{
+  margin:auto;
+  max-width: 900px;
+}
+
+h1,h2{
+  color:#464646;
+  display: inline;
+  clear:none;
+  padding:10px;
+}
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+/**.labels text {
+  pointer-events: none;
+      font-family: sans-serif;
+      font-size: 9px;
+      line-height: 10px;
+      max-width: 10px
+}**/
+
+.link {
+  stroke: #999;
+  stroke-opacity: 0.25;
+}
+
+.labels{
+      pointer-events: none;
+      word-wrap: break-word;
+      width: 7em; 
+      font-family: sans-serif;
+      font-size: 10px;
+      line-height: 10px;
+    }
+
+.overlay{
+    fill: #ffffff;
+}
+
+
+#listTitle{
+    font: 21px  TheSerif, Helvetica, Arial, sans-serif;
+    color: #474747;
+    opacity: 0.75;
+    position: absolute;
+    left: 5%;
+    top: 180px;
+}
+#list{
+  overflow: hidden;
+  border-style: outset;
+  border-width: 1px;
+  border-color: #142f4e;
+  width:300px;
+  margin:25px;
+  /* offset-x | offset-y | color */
+  box-shadow: 2px 2px 3px #A7A7A7
+}
+
+ul {
+   height: 350px;
+    overflow-y: scroll;
+    padding: 0px;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+}
+.formatList{
+      list-style-type: none;  
+      font: 13px  Caecilia, Helvetica, Arial, sans-serif;
+      line-height: 14px;
+      background: #EAF2FA ;
+      margin: 3px;
+}
+
+.formatList:hover { 
+    background-color: #dcdf5a;
+}
+.my-tooltip {
+      max-width: 200px;
+      height: auto;
+      padding: 10px;
+      background-color: white;
+      -webkit-border-radius: 2px;
+      -moz-border-radius: 2px;
+      border-radius: 2px;
+      -webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+      -moz-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+      opacity: 1;
+      filter:alpha(opacity=90);
+      -moz-opacity:0.90;
+
+
+      margin: 0;
+      font-family: sans-serif;
+      font-size: 13px;
+      line-height: 13px;
+    }
+
+
+
+#toolbar{
+    display: inline-block;
+}
+.button{
+  min-width: 130px;
+  padding: 4px 5px;
+  cursor: pointer;
+  text-align: center;
+  font: 14px  TheSerif, Helvetica, Arial, sans-serif;
+  font-weight:400;
+  float:left;
+  margin: 2px 5px 2px 5px;
+  color:#464646;
+  border: 1px solid #e0e0e0;
+}
+
+.button.active {
+  background: #b200b1;/**#8EA4B1**/;
+  color: #fff;
+}
+</style>
+<div id="search_section" class="control">
+  <!--<form id="search_form" action=""  method="post">
+    <p class="search_title">Search <input type="text" class="text-input" id="search" value="" /></p>
+  </form>-->
+</div>
+<h1>OECD Digitalisation ecosystem</h1>
+<h2>A transversal work</h2>
+<div id="toolbar">
+<div class="button  active" id="gd">GD Framework </div>
+<div class="button " id="committee">Committee </div>
+<div class="button " id="project">Project</div>
+</div>
+<br/>
+<div id="legend"></div>
+<div id="chart"></div>
+<div id="listTitle">
+  <div id="list"></div>
+</div>
+<div id="wordcloud"></div>
+<!--<script>window.jQuery || document.write('<script src="libs/jquery-1.7.2.min.js"></script>')</script>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="libs/index.js"></script>
+<script src="libs/cloud.min.js"></script>
+-->
+<script src="libs/d3.v4.min.js"></script>
+<script src="libs/d3.layout.cloud.js"></script>
+<script src="libs/removeStopWords.js"></script>
+
+<script>
+var acronymDef=[]
+d3.csv("data/def_committee.csv", function(error, data) {
+    data.forEach(function(d){
+        acronymDef.push(d)
+      })
+})
+
+var tooltip = d3.select("#chart")
+        .append("div")
+        .attr("class", "my-tooltip")
+        .style("position", "absolute")
+        .style("z-index", "9")
+        .style("visibility", "hidden");
+    tooltip.append("div")
+        .attr("id", "tt-name")
+        .text("simple")
+
+    tooltip.append("div")
+        .attr("id", "tt-def")
+        .style("font-style","italic")
+        .text("simple");;
+
+
+var width = document.body.clientWidth;//document.getElementById("chart").offsetWidth;
+
+var height;
+
+if (width>=600)
+  height=6*width/12;
+else if(width>=450 &width>600)
+  height=width;
+else
+  height=4*width/3;
+
+var heightLeg=50;
+
+
+var wrapWidth = width/8;
+
+var svglegend = d3.select("#legend").append("svg")
+          .attr("width", width)
+          .attr("height",heightLeg);
+
+var svg = d3.select("#chart").append("svg")
+          .attr("width", width)
+          .attr("height",height);
+
+
+
+var color = d3.scaleOrdinal().domain(["Committee","Project","GD Framework level 1","GD Framework level 2"]).range(["#142f4e","#00b1b2",/**"#dcdf5a"**/"#e5e785","#c2c626"]);
+
+
+
+var simulation = d3.forceSimulation()
+    .force("link", d3.forceLink().id(function(d) { return d.name; }))
+    .force("collide",d3.forceCollide( function(d){return d.value*1.2+10 }).iterations(20) )
+    .force("charge", d3.forceManyBody())
+    .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("y", d3.forceY(0))
+    .force("x", d3.forceX(0))
+
+
+var dataLegend=[{name:"Committee"},{name:"Project"},{name:"GD Framework level 1"},{name:"GD Framework level 2"}]
+
+var nodeLegend = svglegend
+  .selectAll("g")
+  .data(dataLegend)
+  .enter()
+  .append("g")
+  .attr("class", function(d){
+    return d.name;
+  })
+  .attr("transform",function(d,i){
+        i++;
+        return "translate("+i*width/6 + ","+heightLeg/5 + ")"
+      });
+
+  var radiusLegend=heightLeg/5
+  nodeLegend.append("circle")
+    .attr("r", radiusLegend)
+    .attr("fill", function(d) { return color(d.name); })
+
+      
+  nodeLegend.append("text")
+    .attr("class","usage")
+    .attr("dy", "0.35em")
+    .attr('text-anchor', 'middle')
+    .attr('font-size',"14px")
+    .style("fill","#464646")
+    .style("font-weight","bold")
+    .attr("x",0)
+    .attr("y",radiusLegend+10)
+    .text(function(d){
+      return d.name;
+    })
+    .call(wrap,wrapWidth);
+  
+  nodeLegend.append("image")
+      .attr("xlink:href", function(d){
+        var key=key=d.name.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_"); //see how to remove all special characters no bugs / [.,\/#!$%\^&\*;:{}=\-_`~()]/g
+        var url="icons/"+key+".svg";
+          return url;
+      })
+      .attr("x", -radiusLegend/2)
+      .attr("y", -radiusLegend/2)
+      .attr("width", radiusLegend)
+      .attr("height", radiusLegend);
+
+var fakeBackground=svg
+    .append("rect")
+    .attr("class", "overlay")
+    .attr("width", width)
+    .attr("height" ,height);
+
+     
+
+var nodes = [];
+var links=[];
+var linkedByIndex = {};
+var radius;
+var node;
+var link;
+var opacityValue;
+
+
+d3.csv("data/data_tot.csv", function(error, graph) {
+  if (error) throw error;
+ 
+  graph.forEach(function(d){
+    var toPush=d.Project;
+
+    nodes.forEach(function(k){
+      if(d.Project==k.name){
+        toPush="not";
+        k.value=k.value+1;
+        k.keyword.push(d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6);
+      }
+    })
+    if (toPush!="not" && d.Project!="")
+      nodes.push({"name": d.Project, "cat": "Project" , "value": 1, "keyword":[d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6]})
+  })
+
+  graph.forEach(function(d){
+    var toPush=d.Committee;
+
+    nodes.forEach(function(k){
+      if(d.Committee==k.name){
+        toPush="not";
+        k.value=k.value+1;
+        k.keyword.push(d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6);
+      }
+    })
+    if (toPush!="not" && d.Committee!="")
+      nodes.push({"name": d.Committee, "cat": "Committee", "value": 1,"keyword":[d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6]})
+  })
+
+  graph.forEach(function(d){
+    var toPush=d.GDFramework1;
+
+    nodes.forEach(function(k){
+      if(d.GDFramework1==k.name){
+        toPush="not";
+        k.value=k.value+1;
+        k.keyword.push(d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6);
+      }
+    })
+    if (toPush!="not" && d.GDFramework1!="")
+      nodes.push({"name": d.GDFramework1, "cat": "GD Framework level 1", "value": 1,"keyword":[d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6]})
+  })
+
+  graph.forEach(function(d){
+    var toPush=d.GDFramework2;
+
+    nodes.forEach(function(k){
+      if(d.GDFramework2==k.name){
+        toPush="not";
+        k.value=k.value+1;
+        k.keyword.push(d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6);
+      }
+    })
+    if (toPush!="not" && d.GDFramework2!="")
+      nodes.push({"name": d.GDFramework2, "cat": "GD Framework level 2", "value": 1,"keyword":[d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6]})
+  })
+
+
+
+  var min=d3.min(nodes.map(function(d) {return (parseFloat(d.value));} ));
+  var max=d3.max(nodes.map(function(d) {return (parseFloat(d.value));} ));
+
+  radius = d3.scaleSqrt().domain([min,max]).range([8,50]);
+
+  var linksTemp = [];
+
+  graph.forEach(function(d){
+
+    if(d.GDFramework1!=""){
+      linksTemp.push({"source": d.Project,"target": d.GDFramework1 ,"value": "4"});
+    };
+    if(d.GDFramework2!=""){    
+      linksTemp.push({"source": d.Project,"target": d.GDFramework2 ,"value": "5"});
+    };
+
+    if(d.Committee!=""){
+      linksTemp.push({"source": d.Project,"target": d.Committee ,"value": "1" });
+      if(d.GDFramework1!=""){
+        linksTemp.push({"source": d.Committee,"target": d.GDFramework1 ,"value": "2"});
+      };
+      if(d.GDFramework2!=""){
+        linksTemp.push({"source": d.Committee,"target": d.GDFramework2 ,"value": "3"});
+      };
+    }
+  })
+
+
+  links = linksTemp.filter(function(elem, pos) {
+    return linksTemp.indexOf(elem) == pos;
+  });
+
+
+  link = svg.selectAll(".link")
+    .data(links)
+    .enter()
+        .append("line")
+        .attr("class", "link")
+    .attr("stroke-width", 1)
+
+
+
+
+  node = svg.selectAll(".node")
+  .attr("class","node")
+    .data(nodes)
+    .enter()
+    .append("g");
+
+     
+  node.append("circle")
+  .attr("class","node")
+    .attr("class", function(d){
+      return d.cat;
+    })
+    .attr("id",function(d){ 
+         return d.name.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_");
+     })
+    .attr("r", function(d){ 
+         return radius(d.value)
+     })
+    .attr("fill", function(d) { return color(d.cat); })
+    .attr("stroke","#b200b1")
+    .attr("stroke-width","0px")
+      /**.call(d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended));**/
+
+
+  node.append("image")
+      .attr("xlink:href", function(d){
+        var key=key=d.cat.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_");
+        var url="icons/"+key+".svg";
+          return url;
+      })
+      .attr("x", function(d){
+        return -radius(d.value)/2;
+      })
+      .attr("y", function(d){
+        return -radius(d.value)/2;
+      })
+      .attr("width", function(d){
+        return radius(d.value);
+      })
+      .attr("height", function(d){
+        return radius(d.value);
+      });
+
+
+
+  /**node.append("title")
+      .text(function(d) { return d.id; });**/
+
+  simulation
+      .nodes(nodes)
+      .on("tick", ticked);
+
+  simulation
+      .force("link")
+      .links(links);
+
+
+
+  node.on("mouseover", function (d) { 
+
+      //d3.select(this).style("opacity",0.6)
+
+     // opacityValue=d3.select(this).style("fill-opacity");
+      
+     // d3.select(this).style("fill-opacity",1);
+
+      d3.select(this).select("circle").style("fill","#b200b1");
+
+        tooltip.select("#tt-name").text(d.name);
+        if (d.cat=="Committee"){
+          var def;
+          acronymDef.forEach(function(k){
+            if(k.Committee==d.name)
+              def= k.fullName;
+          })
+          tooltip.select("#tt-def").text(def); 
+
+        }
+        else{
+          tooltip.select("#tt-def").text("");
+        }
+
+        
+        return tooltip.style("visibility", "visible");
+    }).on("mousemove", function (d) {
+        return tooltip.style("top", (d3.event.pageY - 75) + "px").style("left", (d3.event.pageX - 75) + "px");
+    })
+  .on("mouseout", function (d) {
+      //d3.select(this).style("opacity",1)
+
+      //d3.select(this).style("fill-opacity",opacityValue);
+      
+      d3.select(this).select("circle").style("fill",function(d) { return color(d.cat); });
+
+        return tooltip.style("visibility", "hidden");
+    })
+    .on("click", 
+      clickOver(0.15)
+    )
+
+  fakeBackground
+        .on("click",  clickOut)
+  
+
+  function ticked() {
+   link
+        .attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+    node
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+    
+    /**node
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });**/
+  }
+
+  // build a dictionary of nodes that are linked
+  links.forEach(function(d) {
+      linkedByIndex[d.source.index + "," + d.target.index] = 1;
+  });
+
+  // check the dictionary to see if nodes are linked
+  function isConnected(a, b) {
+      return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
+  }
+
+  // fade nodes on hover
+  function clickOver(opacity) {
+
+      node.style("stroke-opacity", 1);
+      node.style("fill-opacity", 1);
+      link.style("stroke-opacity", 1);
+      link.style("stroke", "#ddd");
+
+      
+      return function(d) {
+          // check all other nodes to see if they're connected
+          // to this one. if so, keep the opacity at 1, otherwise
+          // fade
+
+          drawWordCloud(d.name);
+
+
+          node.style("stroke-opacity", function(o) {
+              thisOpacity = isConnected(d, o) ? 1 : opacity;
+              return thisOpacity;
+          });
+          node.style("fill-opacity", function(o) {
+              thisOpacity = isConnected(d, o) ? 1 : opacity;
+              return thisOpacity;
+          });
+          // also style link accordingly
+          link.style("stroke-opacity", function(o) {
+              return o.source === d || o.target === d ? 1 : opacity;
+          });
+          link.style("stroke", function(o){
+              return o.source === d || o.target === d ? o.source.colour : "#ddd";
+          });
+      };
+  }
+
+  function clickOut() {
+    d3.select("#wordcloud")
+      .selectAll("*")
+      .remove();
+
+      node.style("stroke-opacity", 1);
+      node.style("fill-opacity", 1);
+      link.style("stroke-opacity", 1);
+      link.style("stroke", "#ddd");
+  }
+
+
+
+//start with gd box displayed
+d3.select('#gd').dispatch('click');
+});
+
+function setupButtons() {
+
+    d3.select('#toolbar')
+      .selectAll('.button')
+      .on('click', function () {
+        // Remove active class from all buttons
+        d3.selectAll('.button').classed('active', false);
+        // Find the button just clicked
+        var button = d3.select(this);
+
+        // Set it as the active button
+        button.classed('active', true);
+
+        // Get the id of the button
+        var buttonId = button.attr('id');
+
+
+
+        document.getElementById("list").innerHTML = '';
+        
+        if (buttonId== "project"){
+
+          document.getElementById("list").innerHTML = 'Projects';
+          changeNodeSize("project")
+          toplist = d3.select("#list").append("ul");
+          toplist.selectAll("li")
+              .data(nodes.filter(function(d){ return d.cat=="Project" }).sort(function(a, b){ return d3.ascending(a.name, b.name); }))
+              .enter()
+              .append("li")
+              .attr("class","formatList")
+              .attr("id",function(d){return d.name;})
+              .text(function(d){return d.name;})
+              .on("mouseover",function(d){
+                var nodeSel="#"+d.name.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_")
+
+
+                d3.select("#chart").select(nodeSel).style("fill","#b200b1");
+
+
+                d3.select("#chart").select(nodeSel).attr("r",function(d){
+                  return  1.15 * radius(d.value);
+                })
+              })
+              .on("mouseout",function(d){
+                var nodeSel="#"+d.name.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_")
+
+                d3.select("#chart").select(nodeSel).style("fill",function(d) { return color(d.cat); });
+
+
+                d3.select("#chart").select(nodeSel).attr("r",function(d){
+                  return  radius(d.value);
+                })
+              })
+              .on("click",function(d){
+                var nodeSel="#"+d.name.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_")
+                var nodeSel=d3.select("#chart").select(nodeSel)._groups["0"]["0"].__data__
+
+                clickOverList(nodeSel,0.15)
+          
+              
+              });
+        } else if (buttonId== "committee"){
+
+          document.getElementById("list").innerHTML = 'Committees';
+
+          changeNodeSize("committee")
+          toplist = d3.select("#list").append("ul");
+          toplist.selectAll("li")
+              .data(nodes.filter(function(d){ return d.cat=="Committee" }).sort(function(a, b){ return d3.ascending(a.name, b.name); }))
+              .enter()
+              .append("li")
+              .attr("class","formatList")
+              .attr("id",function(d){return d.name;})
+              .text(function(d){return d.name;})
+              .on("mouseover",function(d){
+                var nodeSel="#"+d.name.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_")
+
+
+
+                d3.select("#chart").select(nodeSel).style("fill","#b200b1");
+
+
+                d3.select("#chart").select(nodeSel).attr("r",function(d){
+                  return 1.15 * radius(d.value);
+                })
+              })
+              .on("mouseout",function(d){
+                var nodeSel="#"+d.name.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_")
+
+                d3.select("#chart").select(nodeSel).style("fill",function(d) { return color(d.cat); });
+
+
+                d3.select("#chart").select(nodeSel).attr("r",function(d){
+                  return  radius(d.value);
+                })
+              })
+                .on("click",function(d){
+                
+                var nodeSel="#"+d.name.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_")
+                var nodeSel=d3.select("#chart").select(nodeSel)._groups["0"]["0"].__data__
+
+                clickOverList(nodeSel,0.15)
+          
+              
+              });
+        }else if (buttonId== "gd"){
+
+          document.getElementById("list").innerHTML = 'GD Frameworks';
+
+          changeNodeSize("gd")
+          toplist = d3.select("#list").append("ul");
+          toplist.selectAll("li")
+              .data(nodes.filter(function(d){ return (d.cat=="GD Framework level 1") || (d.cat=="GD Framework level 2") }).sort(function(a, b){ return d3.ascending(a.name, b.name); }))
+              .enter()
+              .append("li")
+              .attr("class","formatList")
+              .attr("id",function(d){return d.name;})
+              .text(function(d){return d.name;})
+              .on("mouseover",function(d){
+                d3.select("#chart").selectAll("node").attr("fill",function(d){
+                  return "#fff";
+                })
+              })
+              .on("mouseover",function(d){
+                var nodeSel="#"+d.name.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_")
+
+
+
+                d3.select("#chart").select(nodeSel).style("fill","#b200b1");
+
+                d3.select("#chart").select(nodeSel).attr("r",function(d){
+                  return  1.15 * radius(d.value);
+                })
+              })
+              .on("mouseout",function(d){
+                var nodeSel="#"+d.name.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_")
+
+                d3.select("#chart").select(nodeSel).style("fill",function(d) { return color(d.cat); });
+
+
+                d3.select("#chart").select(nodeSel).attr("r",function(d){
+                  return  radius(d.value);
+                })
+              })
+                .on("click",function(d){
+                var nodeSel="#"+d.name.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_")
+                var nodeSel=d3.select("#chart").select(nodeSel)._groups["0"]["0"].__data__
+
+                clickOverList(nodeSel,0.15)
+          
+              
+              });
+          };
+      });
+  }  
+    
+setupButtons();
+// check the dictionary to see if nodes are linked
+function isConnectedList(a, b) {
+    return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
+}
+// fade nodes on hover
+function clickOverList(nodeSel,opacity) {
+
+    d3.select("#chart").selectAll("g").style("stroke-opacity", 1);
+    
+    d3.select("#chart").selectAll("g").style("fill-opacity", 1);
+    
+    d3.select("#chart").selectAll(".link").style("stroke-opacity", 1);
+    
+    d3.select("#chart").selectAll(".link").style("stroke", "##999");
+
+
+    /**return function(d) {
+        // check all other nodes to see if they're connected
+        // to this one. if so, keep the opacity at 1, otherwise
+        // fade**/
+        node.style("stroke-opacity", function(o) {
+            thisOpacity = isConnectedList(nodeSel, o) ? 1 : 0.05;
+            return thisOpacity;
+        });
+        node.style("fill-opacity", function(o) {
+            thisOpacity = isConnectedList(nodeSel, o) ? 1 : 0.05;
+            return thisOpacity;
+        });
+        // also style link accordingly
+        link.style("stroke-opacity", function(o) {
+            return o.source === nodeSel || o.target === nodeSel ? 1 : 0.05;
+        });
+        link.style("stroke", function(o){
+            return o.source === nodeSel || o.target === nodeSel ? o.source.colour : "#ddd";
+        });
+        
+        console.log(nodeSel)
+        
+        drawWordCloud(nodeSel);
+    //};
+}
+
+function changeNodeSize(variable){
+  if (variable=="project"){
+    d3.select("#chart")
+      .selectAll("circle")
+      .transition().duration(500)
+      .attr("stroke-width", function(d){
+        if(d.cat=="Project")
+          return "4px";
+
+        if(d.cat=="Committee")
+          return "0px";
+
+        if(d.cat=="GD Framework level 1")
+          return "0px";
+
+        if(d.cat=="GD Framework level 2")
+          return "0px";
+      })
+  };
+  if (variable=="committee"){
+    d3.select("#chart")
+      .selectAll("circle")
+      .transition().duration(500)
+      .attr("stroke-width",function(d){
+        if(d.cat=="Project")
+          return "0px";
+
+        if(d.cat=="Committee")
+          return "4px";
+
+        if(d.cat=="GD Framework level 1")
+          return "0px";
+
+        if(d.cat=="GD Framework level 2")
+          return "0px";
+      })
+  };
+  if (variable=="gd"){
+    d3.select("#chart")
+      .selectAll("circle")
+      .transition().duration(500)
+      .attr("stroke-width", function(d){
+        if(d.cat=="Project")
+          return "0px";
+
+        if(d.cat=="Committee")
+          return "0px";
+
+        if(d.cat=="GD Framework level 1")
+          return "4px";
+
+        if(d.cat=="GD Framework level 2")
+          return "4px";
+      })
+  };
+}
+
+function wrap(text, width) {  
+  text.each(function() {
+      var text = d3.select(this),
+          words = text.text().split(/\s+/).reverse(),
+          word,
+          line = [],
+          lineNumber = 0,
+          lineHeight = 1.1, // ems
+          y = text.attr("y"),
+          dy = parseFloat(text.attr("dy")),
+          tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+      while (word = words.pop()) {
+          line.push(word);
+          tspan.text(line.join(" "));
+          if (tspan.node().getComputedTextLength() > width) {
+            line.pop();
+            tspan.text(line.join(" "));
+            line = [word];
+            tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+          }
+      }
+  });
+}
+
+function drawWordCloud(nodeName){
+  d3.select("#wordcloud")
+    .selectAll("*")
+    .remove();
+
+  //check nodeName type (as it comes from the node selection or the list selection ) and format it if needed.
+  var objectConstructor = {}.constructor;
+  if(nodeName.constructor === objectConstructor)
+    nodeName=nodeName.name;
+
+  var selNodes= nodes.filter(function(d){ return d.name==nodeName;})
+
+
+console.log(selNodes)
+  var text_string=selNodes[0].keyword.join(' '); // 'Air-Eau-Feu';
+
+
+  var common = "poop,i,me,my,myself,we,us,our,ours,ourselves,you,your,yours,yourself,yourselves,he,him,his,himself,she,her,hers,herself,it,its,itself,they,them,their,theirs,themselves,what,which,who,whom,whose,this,that,these,those,am,is,are,was,were,be,been,being,have,has,had,having,do,does,did,doing,will,would,should,can,could,ought,i'm,you're,he's,she's,it's,we're,they're,i've,you've,we've,they've,i'd,you'd,he'd,she'd,we'd,they'd,i'll,you'll,he'll,she'll,we'll,they'll,isn't,aren't,wasn't,weren't,hasn't,haven't,hadn't,doesn't,don't,didn't,won't,wouldn't,shan't,shouldn't,can't,cannot,couldn't,mustn't,let's,that's,who's,what's,here's,there's,when's,where's,why's,how's,a,an,the,and,but,if,or,because,as,until,while,of,at,by,for,with,about,against,between,into,through,during,before,after,above,below,to,from,up,upon,down,in,out,on,off,over,under,again,further,then,once,here,there,when,where,why,how,all,any,both,each,few,more,most,other,some,such,no,nor,not,only,own,same,so,than,too,very,say,says,said,shall";
+
+  var word_count = {};
+  var words = text_string.split(/[ '\-\(\)\*":;\[\]|{},.!?]+/);
+  if (words.length == 1){
+    word_count[words[0]] = 1;
+  } else {
+    words.forEach(function(word){
+      var word = word.toLowerCase();
+      if (word != "" && common.indexOf(word)==-1 && word.length>1){
+        if (word_count[word]){
+          word_count[word]++;
+        } else {
+          word_count[word] = 1;
+        }
+      }
+    })
+  }
+
+
+  var svg_location = "#wordcloud";
+
+  //var fill = d3.scaleOrdinal(d3.schemeCategory20);
+  var fill = d3.scaleOrdinal().range(["#142f4e","#00b1b2","dcdf5a"]);
+
+  var word_entries = d3.entries(word_count);
+
+  var xScale = d3.scaleLinear()
+    .domain([0, d3.max(word_entries, function(d) {
+        return d.value;
+      })
+    ])
+    .range([7,width/10]);
+    //.range([7,75]);
+
+  d3.layout.cloud().size([width, 2*width/3/2])
+    .timeInterval(20)
+    .words(word_entries)
+    .fontSize(function(d) { return xScale(+d.value); })
+    .text(function(d) { return d.key; })
+    .rotate(function() { return ~~(Math.random() * 2) * 90; })
+    .font("Impact")
+    .on("end", draw)
+    .start();
+
+
+  function draw(words) {
+    d3.select(svg_location).append("svg")
+        .attr("width", width)
+        .attr("height", 2*width/3/2)
+      .append("g")
+        .attr("transform", "translate(" + [width >> 1, (2*width/3/2) >> 1] + ")")
+      .selectAll("text")
+        .data(words)
+      .enter().append("text")
+        .style("font-size", function(d) { return xScale(d.value) + "px"; })
+        .style("font-family", "Impact")
+        .style("fill", function(d, i) { return fill(i); })
+        .attr("text-anchor", "middle")
+        .attr("transform", function(d) {
+          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+        })
+        .text(function(d) { return d.key; });
+  }
+
+}
+
+/*Public function to update highlighted nodes from search */
+/**network.updateSearch = function(searchTerm) {
+  var searchRegEx;
+  searchRegEx = new RegExp(searchTerm.toLowerCase());
+  return node.each(function(d) {
+    var element, match;
+    element = d3.select(this);
+    match = d.name.toLowerCase().search(searchRegEx);
+    if (searchTerm.length > 0 && match >= 0) {
+      element.style("fill", "#F38630").style("stroke-width", 2.0).style("stroke", "#555");
+      return d.searched = true;
+    } else {
+      d.searched = false;
+      return element.style("fill", function(d) {
+        return nodeColors(d.artist);
+      }).style("stroke-width", 1.0);
+    }
+  });
+};
+
+$("#search").keyup(function() {
+  var searchTerm;
+  searchTerm = $(this).val();
+  return myNetwork.updateSearch(searchTerm);
+});**/
+</script>
