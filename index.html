@@ -128,7 +128,7 @@ ul {
 }
 
 .button.active {
-  background: #b200b1;/**#8EA4B1**/;
+  background: #939393 ;/**#b200b1 **//**#8EA4B1**/;
   color: #fff;
 }
 </style>
@@ -423,7 +423,7 @@ d3.csv("data/data_tot.csv", function(error, graph) {
          return radius(d.value)
      })
     .attr("fill", function(d) { return color(d.cat); })
-    .attr("stroke","#b200b1")
+    .attr("stroke","#939393")
     .attr("stroke-width","0px")
       /**.call(d3.drag()
           .on("start", dragstarted)
@@ -473,7 +473,7 @@ d3.csv("data/data_tot.csv", function(error, graph) {
       
      // d3.select(this).style("fill-opacity",1);
 
-      d3.select(this).select("circle").style("fill","#b200b1");
+      d3.select(this).select("circle").style("fill","#939393");
 
         tooltip.select("#tt-name").text(d.name);
         if (d.cat=="Committee"){
@@ -623,7 +623,7 @@ function setupButtons() {
                 var nodeSel="#"+d.name.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_")
 
 
-                d3.select("#chart").select(nodeSel).style("fill","#b200b1");
+                d3.select("#chart").select(nodeSel).style("fill","#939393");
 
 
                 d3.select("#chart").select(nodeSel).attr("r",function(d){
@@ -666,7 +666,7 @@ function setupButtons() {
 
 
 
-                d3.select("#chart").select(nodeSel).style("fill","#b200b1");
+                d3.select("#chart").select(nodeSel).style("fill","#939393");
 
 
                 d3.select("#chart").select(nodeSel).attr("r",function(d){
@@ -722,7 +722,7 @@ function setupButtons() {
 
 
 
-                d3.select("#chart").select(nodeSel).style("fill","#b200b1");
+                d3.select("#chart").select(nodeSel).style("fill","#939393");
 
                 d3.select("#chart").select(nodeSel).attr("r",function(d){
                   return  1.15 * radius(d.value);
