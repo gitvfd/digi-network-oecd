@@ -80,6 +80,9 @@ ul {
       margin: 3px;
 }
 
+.level2{
+  padding-left:20px;
+}
 .formatList:hover { 
     background-color: #dcdf5a;
 }
@@ -287,6 +290,14 @@ var radius;
 var node;
 var link;
 var opacityValue;
+
+var order=[];
+
+d3.csv("data/frameworkOrder.csv", function(error, data) {
+  data.forEach(function(d){
+    order.push(d)
+  })
+})
 
 
 d3.csv("data/data_tot.csv", function(error, graph) {
@@ -688,10 +699,17 @@ function setupButtons() {
           changeNodeSize("gd")
           toplist = d3.select("#list").append("ul");
           toplist.selectAll("li")
-              .data(nodes.filter(function(d){ return (d.cat=="GD Framework level 1") || (d.cat=="GD Framework level 2") }).sort(function(a, b){ return d3.ascending(a.name, b.name); }))
+              //.data(nodes.filter(function(d){ return (d.cat=="GD Framework level 1") || (d.cat=="GD Framework level 2") }).sort(function(a, b){ return d3.ascending(a.name, b.name); }))
+              .data(order)
               .enter()
               .append("li")
-              .attr("class","formatList")
+              .attr("class", function(d){
+                    if (d.cat=="GD Framework level 1")
+                      return "formatList level1";
+                    else
+                      return "formatList level2";
+
+                    })
               .attr("id",function(d){return d.name;})
               .text(function(d){return d.name;})
               .on("mouseover",function(d){
@@ -754,22 +772,22 @@ function clickOverList(nodeSel,opacity) {
         // to this one. if so, keep the opacity at 1, otherwise
         // fade**/
         node.style("stroke-opacity", function(o) {
-            thisOpacity = isConnectedList(nodeSel, o) ? 1 : 0.05;
+            thisOpacity = isConnectedList(nodeSel, o) ? 1 : 0.1;
             return thisOpacity;
         });
         node.style("fill-opacity", function(o) {
-            thisOpacity = isConnectedList(nodeSel, o) ? 1 : 0.05;
+            thisOpacity = isConnectedList(nodeSel, o) ? 1 : 0.1;
             return thisOpacity;
         });
         // also style link accordingly
         link.style("stroke-opacity", function(o) {
-            return o.source === nodeSel || o.target === nodeSel ? 1 : 0.05;
+            return o.source === nodeSel || o.target === nodeSel ? 1 : 0.1;
         });
         link.style("stroke", function(o){
             return o.source === nodeSel || o.target === nodeSel ? o.source.colour : "#ddd";
         });
         
-        console.log(nodeSel)
+        //console.log(nodeSel)
         
         drawWordCloud(nodeSel);
     //};
@@ -856,6 +874,38 @@ function wrap(text, width) {
   });
 }
 
+function taggedNode(selTag){
+
+  var selTagNodes= [];
+  for (i = 0; i < nodes.length; i++) { 
+    for (j = 0; j < nodes[i].keyword.length; j++) {  
+    
+      if(nodes[i].keyword[j]==selTag)
+        selTagNodes.push(nodes[i])
+    }
+  }
+ 
+  d3.select("#chart")
+    .selectAll("circle")
+    .style("fill",function(d){
+
+      for (i = 0; i < selTagNodes.length; i++) { 
+        if(d.name==selTagNodes[i].name)
+          return "#ff0000"
+      }
+    });
+
+}
+
+function untaggedNode(){
+
+ 
+  d3.select("#chart")
+    .selectAll("circle").style("fill", function(d) { return color(d.cat); 
+    });
+
+}
+
 function drawWordCloud(nodeName){
   d3.select("#wordcloud")
     .selectAll("*")
@@ -869,14 +919,14 @@ function drawWordCloud(nodeName){
   var selNodes= nodes.filter(function(d){ return d.name==nodeName;})
 
 
-console.log(selNodes)
-  var text_string=selNodes[0].keyword.join(' '); // 'Air-Eau-Feu';
+//console.log(selNodes)
+  var text_string=selNodes[0].keyword.join(';'); // 'Air-Eau-Feu';
 
 
   var common = "poop,i,me,my,myself,we,us,our,ours,ourselves,you,your,yours,yourself,yourselves,he,him,his,himself,she,her,hers,herself,it,its,itself,they,them,their,theirs,themselves,what,which,who,whom,whose,this,that,these,those,am,is,are,was,were,be,been,being,have,has,had,having,do,does,did,doing,will,would,should,can,could,ought,i'm,you're,he's,she's,it's,we're,they're,i've,you've,we've,they've,i'd,you'd,he'd,she'd,we'd,they'd,i'll,you'll,he'll,she'll,we'll,they'll,isn't,aren't,wasn't,weren't,hasn't,haven't,hadn't,doesn't,don't,didn't,won't,wouldn't,shan't,shouldn't,can't,cannot,couldn't,mustn't,let's,that's,who's,what's,here's,there's,when's,where's,why's,how's,a,an,the,and,but,if,or,because,as,until,while,of,at,by,for,with,about,against,between,into,through,during,before,after,above,below,to,from,up,upon,down,in,out,on,off,over,under,again,further,then,once,here,there,when,where,why,how,all,any,both,each,few,more,most,other,some,such,no,nor,not,only,own,same,so,than,too,very,say,says,said,shall";
 
   var word_count = {};
-  var words = text_string.split(/[ '\-\(\)\*":;\[\]|{},.!?]+/);
+  var words = text_string.split(/['\-\(\)\*":;\[\]|{},.!?]+/);
   if (words.length == 1){
     word_count[words[0]] = 1;
   } else {
@@ -905,7 +955,7 @@ console.log(selNodes)
         return d.value;
       })
     ])
-    .range([7,width/10]);
+    .range([8,width/20]);
     //.range([7,75]);
 
   d3.layout.cloud().size([width, 2*width/3/2])
@@ -914,7 +964,7 @@ console.log(selNodes)
     .fontSize(function(d) { return xScale(+d.value); })
     .text(function(d) { return d.key; })
     .rotate(function() { return ~~(Math.random() * 2) * 90; })
-    .font("Impact")
+    .font("TheSerif")                                                            //previously "Impact"
     .on("end", draw)
     .start();
 
@@ -929,13 +979,28 @@ console.log(selNodes)
         .data(words)
       .enter().append("text")
         .style("font-size", function(d) { return xScale(d.value) + "px"; })
-        .style("font-family", "Impact")
+        .style("font-family", "TheSerif")                                           //previously "Impact"
         .style("fill", function(d, i) { return fill(i); })
         .attr("text-anchor", "middle")
         .attr("transform", function(d) {
           return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
         })
-        .text(function(d) { return d.key; });
+        .text(function(d) { return d.key; })
+        .on('mouseover',function(d){
+          d3.select(this)
+            .style("opacity",0.5);
+          
+          taggedNode(d.text);
+        })
+        .on('mouseout',function(d){
+          d3.select(this)
+          .style("opacity",1)
+
+          untaggedNode();
+        })
+        /**.on("click",function(d){
+          console.log(d.text);
+        })**/;
   }
 
 }
