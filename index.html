@@ -600,7 +600,7 @@ function setupButtons() {
           node.style("fill-opacity", 1);
           link.style("stroke-opacity", 1);
           link.style("stroke", "#ddd");
-          
+
           document.getElementById("list").innerHTML = 'Projects';
           
           changeNodeSize("project")
@@ -659,7 +659,17 @@ function setupButtons() {
               .append("li")
               .attr("class","formatList")
               .attr("id",function(d){return d.name;})
-              .text(function(d){return d.name;})
+              .text(function(d){
+                        var complement;
+                        acronymDef.forEach(function(k){
+                          if(k.Committee==d.name)
+                            complement= k.fullName;
+                          })
+                          if(complement!=undefined)
+                            return d.name + " - "+ complement;
+                          else 
+                            return d.name;
+                      })
               .on("mouseover",function(d){
                 var nodeSel="#"+d.name.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_")
 
