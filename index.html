@@ -8,12 +8,45 @@ body{
   max-width: 900px;
 }
 
-h1,h2{
-  color:#464646;
+
+h1{
+  position: absolute; 
+  top: -15px; 
+  left: 0; 
+  color:#fff;
   display: inline;
   clear:none;
-  padding:10px;
+  margin-left: 5px;
+  padding-left:5px;
+  padding-right:5px;
+   background: rgb(255, 255, 255); /* fallback color */
+   background: rgba(255, 255, 255, 0.7);
 }
+
+h2{
+  position: absolute; 
+  top: 30px; 
+  left: 0; 
+  color:#fff;
+  display: inline;
+  clear:none;
+  margin-left: 5px;
+  padding-left:5px;
+  padding-right:5px;
+   background: rgb(255, 255, 255); /* fallback color */
+   background: rgba(255, 255, 255, 0.7);
+}
+
+.banner{
+  position: relative; 
+  margin:auto;
+  max-width: 900px;
+}
+.bannerPIC{
+  margin:auto;
+  max-width: 900px;
+}
+
 .node {
   stroke: #fff;
   stroke-width: 1.5px;
@@ -145,8 +178,16 @@ ul {
     <p class="search_title">Search <input type="text" class="text-input" id="search" value="" /></p>
   </form>-->
 </div>
+<div class="banner">
+
+<img   class="bannerPIC" src="icons/GOING_DIGITAL-banner_1140x110.png"></img>
 <h1>OECD Going Digital ecosystem</h1>
 <h2>Horizontal project</h2>
+
+</div>
+
+
+
 <div id="toolbar">
 <div class="button  active" id="gd">Framework </div>
 <div class="button " id="committee">Committee </div>
