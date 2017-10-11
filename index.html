@@ -11,30 +11,32 @@ body{
 
 h1{
   position: absolute; 
-  top: -15px; 
+  top: 0px; 
   left: 0; 
+  font-family:Arial;
   color:#fff;
   display: inline;
   clear:none;
   margin-left: 5px;
   padding-left:5px;
   padding-right:5px;
-   background: rgb(255, 255, 255); /* fallback color */
-   background: rgba(255, 255, 255, 0.7);
+   /**background: rgb(255, 255, 255); /* fallback color */
+   /*background: rgba(255, 255, 255, 0.7);*/
 }
 
 h2{
   position: absolute; 
-  top: 30px; 
+  top: 45px; 
   left: 0; 
+  font-family:Arial;
   color:#fff;
   display: inline;
   clear:none;
   margin-left: 5px;
   padding-left:5px;
   padding-right:5px;
-   background: rgb(255, 255, 255); /* fallback color */
-   background: rgba(255, 255, 255, 0.7);
+   /**background: rgb(255, 255, 255); /* fallback color */
+   /*background: rgba(255, 255, 255, 0.7);*/
 }
 
 .banner{
@@ -44,7 +46,7 @@ h2{
 }
 .bannerPIC{
   margin:auto;
-  max-width: 900px;
+  width:100%;
 }
 
 .node {
@@ -172,6 +174,28 @@ ul {
   clear: both;
   float:right;
 }
+
+@media screen and (max-width: 670px) {
+  h1{
+    top: -15px; 
+  }
+
+  h2{
+    top: 30px; 
+    left: 0; 
+  }
+}
+@media screen and (max-width: 550px) {
+  h1{
+    top: -15px; 
+    font-size: 1.5em;
+  }
+
+  h2{
+    top: 20px; 
+    font-size: 1em;
+  }
+}
 </style>
 <div id="search_section" class="control">
   <!--<form id="search_form" action=""  method="post">
@@ -287,7 +311,7 @@ var nodeLegend = svglegend
   })
   .attr("transform",function(d,i){
         i++;
-        return "translate("+i*width/6 + ","+heightLeg/4 + ")"
+        return "translate("+i*width/4 + ","+heightLeg/4 + ")"
       });
 
   var radiusLegend=heightLeg/4
