@@ -114,6 +114,14 @@ ul {
       background: #EAF2FA ;
       margin: 3px;
 }
+.formatList.light{
+      list-style-type: none;  
+      font: 13px  Caecilia, Helvetica, Arial, sans-serif;
+      line-height: 14px;
+      background: #fcfdfe ;
+
+      margin: 3px;
+}
 
 .level2{
   padding-left:20px;
@@ -216,7 +224,7 @@ ul {
 <div class="button  active" id="gd">Framework </div>
 <div class="button " id="committee">Committee </div>
 <div class="button " id="project">Project</div>
-<div class="button right" id="theme">Theme</div>
+<div class="button" id="theme">Theme</div><!-- previous class was "button right"-->
 </div>
 <br/>
 <div id="legend"></div>
@@ -656,6 +664,7 @@ function setupButtons() {
         var buttonId = button.attr('id');
 
 
+        var alternate=0;
 
         document.getElementById("list").innerHTML = '';
         
@@ -675,7 +684,16 @@ function setupButtons() {
               .data(nodes.filter(function(d){ return d.cat=="Project" }).sort(function(a, b){ return d3.ascending(a.name, b.name); }))
               .enter()
               .append("li")
-              .attr("class","formatList")
+              .attr("class",function(){
+                if (alternate==0){
+                  alternate=1
+                  return "formatList"
+                }
+                else{
+                  alternate=0;
+                  return  "formatList light"
+                }
+              })
               .attr("id",function(d){return d.name;})
               .text(function(d){return d.name;})
               .on("mouseover",function(d){
@@ -722,7 +740,16 @@ function setupButtons() {
               .data(nodes.filter(function(d){ return d.cat=="Committee" }).sort(function(a, b){ return d3.ascending(a.name, b.name); }))
               .enter()
               .append("li")
-              .attr("class","formatList")
+              .attr("class",function(){
+                if (alternate==0){
+                  alternate=1
+                  return "formatList"
+                }
+                else{
+                  alternate=0;
+                  return  "formatList light"
+                }
+              })
               .attr("id",function(d){return d.name;})
               .text(function(d){
                         var complement;
@@ -783,7 +810,16 @@ function setupButtons() {
               //.data(order)
               .enter()
               .append("li")
-              .attr("class", "formatList")
+              .attr("class", function(){
+                if (alternate==0){
+                  alternate=1
+                  return "formatList"
+                }
+                else{
+                  alternate=0;
+                  return  "formatList light"
+                }
+              })
               .attr("id",function(d){return d.name;})
               .text(function(d){return d.name;})
               .on("mouseover",function(d){
@@ -843,12 +879,21 @@ function setupButtons() {
               .data(listTag.sort(function(a, b){ return d3.ascending(a, b); }))
               .enter()
               .append("li")
-              .attr("class", "formatList")
+              .attr("class", function(){
+                if (alternate==0){
+                  alternate=1
+                  return "formatList"
+                }
+                else{
+                  alternate=0;
+                  return  "formatList light"
+                }
+              })
               .attr("id",function(d){return d;})
               .text(function(d){return d;})       
               .on("click",function(d){
                 d3.selectAll(".formatList")
-                  .style("background","#EAF2FA")
+                  .style("background",d3.select(this).style.backgroundColor)
                   .style("color","#474747");
 
 
