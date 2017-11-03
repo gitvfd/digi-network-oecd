@@ -868,7 +868,7 @@ function setupButtons() {
           var listTag=[];
           nodes.forEach(function(d){
             d.keyword.forEach(function(z){
-              listTag.push(z)
+                listTag.push(z)
             })
           })
 
@@ -877,7 +877,7 @@ function setupButtons() {
           changeNodeSize("theme");
           toplist = d3.select("#list").append("ul").attr("class","navList");
           toplist.selectAll("li")
-              .data(listTag.sort(function(a, b){ return d3.ascending(a, b); }))
+              .data(listTag.filter(function(d){return d!="undefined";}).sort(function(a, b){ return d3.ascending(a, b); }))
               .enter()
               .append("li")
               .attr("class", function(){
