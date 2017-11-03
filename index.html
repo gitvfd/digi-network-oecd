@@ -29,6 +29,7 @@ h2{
   top: 45px; 
   left: 0; 
   font-family:Arial;
+  font-size: 1.15em;
   color:#fff;
   display: inline;
   clear:none;
@@ -82,7 +83,7 @@ h2{
 
 
 #listTitle{
-    font: 21px  TheSerif, Helvetica, Arial, sans-serif;
+    font: 21px  Caecilia, Helvetica, Arial, sans-serif;
     color: #474747;
     opacity: 0.75;
     position: absolute;
@@ -164,7 +165,7 @@ ul {
   padding: 4px 5px;
   cursor: pointer;
   text-align: center;
-  font: 14px  TheSerif, Helvetica, Arial, sans-serif;
+  font: 14px  Caecilia, Helvetica, Arial, sans-serif;
   font-weight:400;
   float:left;
   margin: 2px 5px 2px 5px;
@@ -213,8 +214,8 @@ ul {
 <div class="banner">
 
 <img   class="bannerPIC" src="icons/GOING_DIGITAL-banner_1140x110.png"></img>
-<h1>OECD Going Digital ecosystem</h1>
-<h2>Horizontal project</h2>
+<h1>OECD Going Digital project</h1>
+<h2>Making the Digital Transformation Work for Growth and Well-being</h2>
 
 </div>
 
@@ -381,7 +382,7 @@ d3.csv("data/frameworkOrder.csv", function(error, data) {
 })
 
 
-d3.csv("data/data_tot.csv", function(error, graph) {
+d3.tsv("data/data_tot.tsv", function(error, graph) {
   if (error) throw error;
  
   graph.forEach(function(d){
@@ -1212,7 +1213,7 @@ function drawWordCloud(nodeName){
     .fontSize(function(d) { return xScale(+d.value); })
     .text(function(d) { return d.key; })
     .rotate(function() { return ~~(Math.random() * 2) * 90; })
-    .font("TheSerif")                                                            //previously "Impact"
+    .font("Arial")                                                            //previously "Impact"
     .on("end", draw)
     .start();
 
@@ -1227,7 +1228,7 @@ function drawWordCloud(nodeName){
         .data(words)
       .enter().append("text")
         .style("font-size", function(d) { return xScale(d.value) + "px"; })
-        .style("font-family", "TheSerif")                                           //previously "Impact"
+        .style("font-family", "Arial")                                           //previously "Impact"
         .style("fill", function(d, i) { return fill(i); })
         .attr("text-anchor", "middle")
         .attr("transform", function(d) {
