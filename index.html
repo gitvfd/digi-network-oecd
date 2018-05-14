@@ -10,6 +10,12 @@ body{
 
 
 h1{
+  font : 24px Caecilia lt bold; color:#0297C9;
+  padding: 5px 5px 0px 0px;
+  display: inline-block;
+}
+/**Previous h1
+h1{
   position: absolute; 
   top: 0px; 
   left: 0; 
@@ -20,9 +26,8 @@ h1{
   margin-left: 5px;
   padding-left:5px;
   padding-right:5px;
-   /**background: rgb(255, 255, 255); /* fallback color */
-   /*background: rgba(255, 255, 255, 0.7);*/
-}
+   
+}**/
 
 h2{
   position: absolute; 
@@ -212,20 +217,20 @@ ul {
   </form>-->
 </div>
 <div class="banner">
-
-<img   class="bannerPIC" src="icons/GOING_DIGITAL-banner_1140x110.png"></img>
+<!--previous header-->
+<!--<img   class="bannerPIC" src="icons/GOING_DIGITAL-banner_1140x110.png"></img>
 <h1>OECD Going Digital project</h1>
-<h2>Making the Digital Transformation Work for Growth and Well-being</h2>
-
+<h2>Making the Digital Transformation Work for Growth and Well-being</h2>-->
+<h1>Visualisation of Going Digital output</h1>
 </div>
 
 
 
 <div id="toolbar">
-<div class="button  active" id="gd">Framework </div>
+<div class="button active"  id="theme">Theme</div>
 <div class="button " id="committee">Committee </div>
-<div class="button " id="project">Project</div>
-<div class="button" id="theme">Theme</div><!-- previous class was "button right"-->
+<div class="button " id="gd">Framework </div>
+<!--<div class="button " id="project">Project</div>--><!-- previous class was "button right"-->
 </div>
 <br/>
 <div id="legend"></div>
@@ -234,7 +239,7 @@ ul {
 <input placeholder="Search Me" id="box" type="text" />
   <div id="list"></div>
 </div>
-<div id="wordcloud"></div>
+<!--<div id="wordcloud"></div>-->
 <script src="libs/jquery-1.7.2.min.js"></script>
 <!--
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -268,13 +273,17 @@ var tooltip = d3.select("#chart")
         .style("font-style","italic")
         .text("simple");;
 
+    tooltip.append("div")
+        .attr("id", "tt-ref")
+        .style("font-style","italic")
+        .text("simple");;
 
 var width = document.body.clientWidth;//document.getElementById("chart").offsetWidth;
 
 var height;
 
 if (width>=600)
-  height=6*width/12;
+  height=2.5*width/3;
 else if(width>=450 &width>600)
   height=width;
 else
@@ -295,7 +304,7 @@ var svg = d3.select("#chart").append("svg")
 
 
 
-var color = d3.scaleOrdinal().domain(["Committee","Project","Going Digital Framework"]).range(["#142f4e","#00b1b2","#dcdf5a"]);
+var color = d3.scaleOrdinal().domain(["Committee","Output","Going Digital Framework"]).range(["#142f4e","#00b1b2","#dcdf5a"]);
 
 
 
@@ -308,7 +317,7 @@ var simulation = d3.forceSimulation()
     .force("x", d3.forceX(0))
 
 
-var dataLegend=[{name:"Going Digital Framework"},{name:"Committee"},{name:"Project"}]
+var dataLegend=[{name:"Going Digital Framework"},{name:"Committee"},{name:"Output"}]
 
 var nodeLegend = svglegend
   .selectAll("g")
@@ -386,17 +395,20 @@ d3.tsv("data/data_tot.tsv", function(error, graph) {
   if (error) throw error;
  
   graph.forEach(function(d){
-    var toPush=d.Project;
+    var toPush=d.Output;
 
     nodes.forEach(function(k){
-      if(d.Project==k.name){
+      if(d.Output==k.name){
         toPush="not";
         k.value=k.value+1;
-        k.keyword.push(d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6);
+        k.keyword.push(d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6,d.Tags7,d.Tags8,d.Tags9,d.Tags10,d.Tags11,d.Tags12,d.Tags13,d.Tags14,d.Tags15,d.Tags16,d.Tags17,d.Tags18,d.Tags19,d.Tags20,d.Tags21,d.Tags22,d.Tags23,d.Tags24,d.Tags25,d.Tags26,d.Tags27,d.Tags28,d.Tags29,d.Tags30,d.Tags31,d.Tags32,d.Tags33,d.Tags34,d.Tags35,d.Tags36,d.Tags37,d.Tags38,d.Tags39,d.Tags40,d.Tags41,d.Tags42);
+
       }
     })
-    if (toPush!="not" && d.Project!="")
-      nodes.push({"name": d.Project, "cat": "Project" , "value": 1, "keyword":[d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6]})
+    if (toPush!="not" && d.Output!=""){
+      var refNumber="Reference: #" + d.OutputNumber;
+      nodes.push({"name": d.Output, "cat": "Output" , "value": 1, "keyword":[d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6,d.Tags7,d.Tags8,d.Tags9,d.Tags10,d.Tags11,d.Tags12,d.Tags13,d.Tags14,d.Tags15,d.Tags16,d.Tags17,d.Tags18,d.Tags19,d.Tags20,d.Tags21,d.Tags22,d.Tags23,d.Tags24,d.Tags25,d.Tags26,d.Tags27,d.Tags28,d.Tags29,d.Tags30,d.Tags31,d.Tags32,d.Tags33,d.Tags34,d.Tags35,d.Tags36,d.Tags37,d.Tags38,d.Tags39,d.Tags40,d.Tags41,d.Tags42],"refNumber":refNumber})
+      }
   })
 
   graph.forEach(function(d){
@@ -406,11 +418,11 @@ d3.tsv("data/data_tot.tsv", function(error, graph) {
       if(d.Committee==k.name){
         toPush="not";
         k.value=k.value+1;
-        k.keyword.push(d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6);
+        k.keyword.push(d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6,d.Tags7,d.Tags8,d.Tags9,d.Tags10,d.Tags11,d.Tags12,d.Tags13,d.Tags14,d.Tags15,d.Tags16,d.Tags17,d.Tags18,d.Tags19,d.Tags20,d.Tags21,d.Tags22,d.Tags23,d.Tags24,d.Tags25,d.Tags26,d.Tags27,d.Tags28,d.Tags29,d.Tags30,d.Tags31,d.Tags32,d.Tags33,d.Tags34,d.Tags35,d.Tags36,d.Tags37,d.Tags38,d.Tags39,d.Tags40,d.Tags41,d.Tags42);
       }
     })
     if (toPush!="not" && d.Committee!="")
-      nodes.push({"name": d.Committee, "cat": "Committee", "value": 1,"keyword":[d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6]})
+      nodes.push({"name": d.Committee, "cat": "Committee", "value": 1,"keyword":[d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6,d.Tags7,d.Tags8,d.Tags9,d.Tags10,d.Tags11,d.Tags12,d.Tags13,d.Tags14,d.Tags15,d.Tags16,d.Tags17,d.Tags18,d.Tags19,d.Tags20,d.Tags21,d.Tags22,d.Tags23,d.Tags24,d.Tags25,d.Tags26,d.Tags27,d.Tags28,d.Tags29,d.Tags30,d.Tags31,d.Tags32,d.Tags33,d.Tags34,d.Tags35,d.Tags36,d.Tags37,d.Tags38,d.Tags39,d.Tags40,d.Tags41,d.Tags42]})
   })
 
   graph.forEach(function(d){
@@ -420,11 +432,11 @@ d3.tsv("data/data_tot.tsv", function(error, graph) {
       if(d.GDFramework==k.name){
         toPush="not";
         k.value=k.value+1;
-        k.keyword.push(d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6);
+        k.keyword.push(d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6,d.Tags7,d.Tags8,d.Tags9,d.Tags10,d.Tags11,d.Tags12,d.Tags13,d.Tags14,d.Tags15,d.Tags16,d.Tags17,d.Tags18,d.Tags19,d.Tags20,d.Tags21,d.Tags22,d.Tags23,d.Tags24,d.Tags25,d.Tags26,d.Tags27,d.Tags28,d.Tags29,d.Tags30,d.Tags31,d.Tags32,d.Tags33,d.Tags34,d.Tags35,d.Tags36,d.Tags37,d.Tags38,d.Tags39,d.Tags40,d.Tags41,d.Tags42);
       }
     })
     if (toPush!="not" && d.GDFramework!="")
-      nodes.push({"name": d.GDFramework, "cat": "Going Digital Framework", "value": 1,"keyword":[d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6]})
+      nodes.push({"name": d.GDFramework, "cat": "Going Digital Framework", "value": 1,"keyword":[d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6,d.Tags7,d.Tags8,d.Tags9,d.Tags10,d.Tags11,d.Tags12,d.Tags13,d.Tags14,d.Tags15,d.Tags16,d.Tags17,d.Tags18,d.Tags19,d.Tags20,d.Tags21,d.Tags22,d.Tags23,d.Tags24,d.Tags25,d.Tags26,d.Tags27,d.Tags28,d.Tags29,d.Tags30,d.Tags31,d.Tags32,d.Tags33,d.Tags34,d.Tags35,d.Tags36,d.Tags37,d.Tags38,d.Tags39,d.Tags40,d.Tags41,d.Tags42]})
   })
 
 
@@ -438,10 +450,10 @@ d3.tsv("data/data_tot.tsv", function(error, graph) {
   graph.forEach(function(d){
 
     if(d.GDFramework!=""){
-      linksTemp.push({"source": d.Project,"target": d.GDFramework ,"value": "3"});
+      linksTemp.push({"source": d.Output,"target": d.GDFramework ,"value": "3"});
     };
     if(d.Committee!=""){
-      linksTemp.push({"source": d.Project,"target": d.Committee ,"value": "1" });
+      linksTemp.push({"source": d.Output,"target": d.Committee ,"value": "1" });
       if(d.GDFramework!=""){
         linksTemp.push({"source": d.Committee,"target": d.GDFramework ,"value": "2"});
       };
@@ -550,6 +562,8 @@ d3.tsv("data/data_tot.tsv", function(error, graph) {
           tooltip.select("#tt-def").text("");
         }
 
+        tooltip.select("#tt-ref").text(d.refNumber);
+
         
         return tooltip.style("visibility", "visible");
     }).on("mousemove", function (d) {
@@ -644,8 +658,8 @@ d3.tsv("data/data_tot.tsv", function(error, graph) {
 
 
 
-//start with gd box displayed
-d3.select('#gd').dispatch('click');
+  //start with gd box displayed
+  d3.select('#gd').dispatch('click');
 });
 
 function setupButtons() {
@@ -669,20 +683,20 @@ function setupButtons() {
 
         document.getElementById("list").innerHTML = '';
         
-        if (buttonId== "project"){
+        if (buttonId== "Output"){
 
           node.style("stroke-opacity", 1);
           node.style("fill-opacity", 1);
           link.style("stroke-opacity", 1);
           link.style("stroke", "#ddd");
 
-          document.getElementById("list").innerHTML = 'Projects';
+          document.getElementById("list").innerHTML = 'Outputs';
           
-          changeNodeSize("project")
+          changeNodeSize("Output")
 
           toplist = d3.select("#list").append("ul").attr("class","navList");
           toplist.selectAll("li")
-              .data(nodes.filter(function(d){ return d.cat=="Project" }).sort(function(a, b){ return d3.ascending(a.name, b.name); }))
+              .data(nodes.filter(function(d){ return d.cat=="Output" }).sort(function(a, b){ return d3.ascending(a.name, b.name); }))
               .enter()
               .append("li")
               .attr("class",function(){
@@ -963,13 +977,13 @@ function clickOverList(nodeSel,opacity) {
 
 function changeNodeSize(variable){
 
-  if (variable=="project"){
+  if (variable=="Output"){
     d3.select("#chart")
       .selectAll("circle")
       .transition().duration(500)
       .attr("stroke","#939393")
       .attr("stroke-width", function(d){
-        if(d.cat=="Project")
+        if(d.cat=="Output")
           return "4px";
 
         if(d.cat=="Committee")
@@ -986,7 +1000,7 @@ function changeNodeSize(variable){
       .transition().duration(500)
       .attr("stroke","#939393")
       .attr("stroke-width",function(d){
-        if(d.cat=="Project")
+        if(d.cat=="Output")
           return "0px";
 
         if(d.cat=="Committee")
@@ -1003,7 +1017,7 @@ function changeNodeSize(variable){
       .transition().duration(500)
       .attr("stroke","#939393")
       .attr("stroke-width", function(d){
-        if(d.cat=="Project")
+        if(d.cat=="Output")
           return "0px";
 
         if(d.cat=="Committee")
@@ -1021,7 +1035,7 @@ function changeNodeSize(variable){
       .transition().duration(500)
       .attr("stroke","#939393")
       .attr("stroke-width", function(d){
-        if(d.cat=="Project")
+        if(d.cat=="Output")
           return "0px";
 
         if(d.cat=="Committee")
