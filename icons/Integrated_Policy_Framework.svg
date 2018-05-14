@@ -6,14 +6,14 @@
 <g>
 	<g>
 		<g>
-			<path fill="#953D2C" stroke="#BDD7EE" stroke-width="18" stroke-miterlimit="10" d="M150,150L41.1,64.9
+			<path fill="#953D2C" stroke="#FFFFFF" stroke-width="18" stroke-miterlimit="10" d="M150,150L41.1,64.9
 				C67.9,30.5,106.4,11.8,150,11.8V150z"/>
 		</g>
 	</g>
 	<g>
 		<g>
 			<g>
-				<path fill="#98CD00" stroke="#BDD7EE" stroke-width="18" stroke-miterlimit="10" d="M150,150L15.3,181.1
+				<path fill="#98CD00" stroke="#FFFFFF" stroke-width="18" stroke-miterlimit="10" d="M150,150L15.3,181.1
 					c-9.8-42.5-1.1-81.9,25.8-116.2L150,150z"/>
 			</g>
 		</g>
@@ -21,7 +21,7 @@
 	<g>
 		<g>
 			<g>
-				<path fill="#49B957" stroke="#BDD7EE" stroke-width="18" stroke-miterlimit="10" d="M150,150L91.6,275.3
+				<path fill="#49B957" stroke="#FFFFFF" stroke-width="18" stroke-miterlimit="10" d="M150,150L91.6,275.3
 					c-39.5-18.4-66.5-51.7-76.3-94.2L150,150z"/>
 			</g>
 		</g>
@@ -29,7 +29,7 @@
 	<g>
 		<g>
 			<g>
-				<path fill="#00AACB" stroke="#BDD7EE" stroke-width="18" stroke-miterlimit="10" d="M150,150l60.6,124.3
+				<path fill="#00AACB" stroke="#FFFFFF" stroke-width="18" stroke-miterlimit="10" d="M150,150l60.6,124.3
 					c-39.2,19.1-79.5,19.5-119,1L150,150z"/>
 			</g>
 		</g>
@@ -37,7 +37,7 @@
 	<g>
 		<g>
 			<g>
-				<path fill="#8B73B2" stroke="#BDD7EE" stroke-width="18" stroke-miterlimit="10" d="M150,150l135.2,28.7
+				<path fill="#8B73B2" stroke="#FFFFFF" stroke-width="18" stroke-miterlimit="10" d="M150,150l135.2,28.7
 					c-9.1,42.6-35.4,76.4-74.6,95.5L150,150z"/>
 			</g>
 		</g>
@@ -45,7 +45,7 @@
 	<g>
 		<g>
 			<g>
-				<path fill="#FCAF16" stroke="#BDD7EE" stroke-width="18" stroke-miterlimit="10" d="M150,150l107.4-87
+				<path fill="#FCAF16" stroke="#FFFFFF" stroke-width="18" stroke-miterlimit="10" d="M150,150l107.4-87
 					c27.4,33.9,36.9,73.1,27.8,115.7L150,150z"/>
 			</g>
 		</g>
@@ -53,7 +53,7 @@
 	<g>
 		<g>
 			<g>
-				<path fill="#F48222" stroke="#BDD7EE" stroke-width="18" stroke-miterlimit="10" d="M150,150V11.8c43.6,0,80,17.4,107.4,51.2
+				<path fill="#F48222" stroke="#FFFFFF" stroke-width="18" stroke-miterlimit="10" d="M150,150V11.8c43.6,0,80,17.4,107.4,51.2
 					L150,150z"/>
 			</g>
 		</g>
