@@ -304,7 +304,7 @@ var svg = d3.select("#chart").append("svg")
 
 
 
-var color = d3.scaleOrdinal().domain(["Committee","Output","Going Digital Framework"]).range(["#142f4e","#00b1b2","#dcdf5a"]);
+var color = d3.scaleOrdinal().domain(["Committee","Output","Integrated Policy Framework"]).range(["#142f4e","#00b1b2","#BDD7EE"]);
 
 
 
@@ -317,7 +317,7 @@ var simulation = d3.forceSimulation()
     .force("x", d3.forceX(0))
 
 
-var dataLegend=[{name:"Going Digital Framework"},{name:"Committee"},{name:"Output"}]
+var dataLegend=[{name:"Integrated Policy Framework"},{name:"Committee"},{name:"Output"}]
 
 var nodeLegend = svglegend
   .selectAll("g")
@@ -348,7 +348,7 @@ var nodeLegend = svglegend
     .attr("x",0)
     .attr("y",radiusLegend+10)
     .text(function(d){
-      if(d.name=="Going Digital Framework")
+      if(d.name=="Integrated Policy Framework")
         return "Framework";
       else
       return d.name;
@@ -436,7 +436,7 @@ d3.tsv("data/data_tot.tsv", function(error, graph) {
       }
     })
     if (toPush!="not" && d.GDFramework!="")
-      nodes.push({"name": d.GDFramework, "cat": "Going Digital Framework", "value": 1,"keyword":[d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6,d.Tags7,d.Tags8,d.Tags9,d.Tags10,d.Tags11,d.Tags12,d.Tags13,d.Tags14,d.Tags15,d.Tags16,d.Tags17,d.Tags18,d.Tags19,d.Tags20,d.Tags21,d.Tags22,d.Tags23,d.Tags24,d.Tags25,d.Tags26,d.Tags27,d.Tags28,d.Tags29,d.Tags30,d.Tags31,d.Tags32,d.Tags33,d.Tags34,d.Tags35,d.Tags36,d.Tags37,d.Tags38,d.Tags39,d.Tags40,d.Tags41,d.Tags42]})
+      nodes.push({"name": d.GDFramework, "cat": "Integrated Policy Framework", "value": 1,"keyword":[d.Tags1,d.Tags2,d.Tags3,d.Tags4,d.Tags5,d.Tags6,d.Tags7,d.Tags8,d.Tags9,d.Tags10,d.Tags11,d.Tags12,d.Tags13,d.Tags14,d.Tags15,d.Tags16,d.Tags17,d.Tags18,d.Tags19,d.Tags20,d.Tags21,d.Tags22,d.Tags23,d.Tags24,d.Tags25,d.Tags26,d.Tags27,d.Tags28,d.Tags29,d.Tags30,d.Tags31,d.Tags32,d.Tags33,d.Tags34,d.Tags35,d.Tags36,d.Tags37,d.Tags38,d.Tags39,d.Tags40,d.Tags41,d.Tags42]})
   })
 
 
@@ -816,12 +816,12 @@ function setupButtons() {
           link.style("stroke", "#ddd");
 
 
-          document.getElementById("list").innerHTML = 'Going Digital Framework';
+          document.getElementById("list").innerHTML = 'Integrated Policy Framework';
 
           changeNodeSize("gd")
           toplist = d3.select("#list").append("ul").attr("class","navList");
           toplist.selectAll("li")
-              .data(nodes.filter(function(d){ return (d.cat=="Going Digital Framework") }).sort(function(a, b){ return d3.ascending(a.name, b.name); }))
+              .data(nodes.filter(function(d){ return (d.cat=="Integrated Policy Framework") }).sort(function(a, b){ return d3.ascending(a.name, b.name); }))
               //.data(order)
               .enter()
               .append("li")
@@ -989,7 +989,7 @@ function changeNodeSize(variable){
         if(d.cat=="Committee")
           return "0px";
 
-        if(d.cat=="Going Digital Framework")
+        if(d.cat=="Integrated Policy Framework")
           return "0px";
       })
 
@@ -1007,7 +1007,7 @@ function changeNodeSize(variable){
           return "4px";
 
 
-        if(d.cat=="Going Digital Framework")
+        if(d.cat=="Integrated Policy Framework")
           return "0px";
       })
   };
@@ -1024,7 +1024,7 @@ function changeNodeSize(variable){
           return "0px";
 
 
-        if(d.cat=="Going Digital Framework")
+        if(d.cat=="Integrated Policy Framework")
           return "4px";
       })
   };
@@ -1042,7 +1042,7 @@ function changeNodeSize(variable){
           return "0px";
 
 
-        if(d.cat=="Going Digital Framework")
+        if(d.cat=="Integrated Policy Framework")
           return "0px";
       })
   };
