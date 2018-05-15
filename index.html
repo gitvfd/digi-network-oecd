@@ -11,7 +11,7 @@ body{
 
 h1{
   font : 24px Caecilia lt bold; color:#0297C9;
-  padding: 5px 5px 0px 0px;
+  padding: 5px 0px 0px 5px;
   display: inline-block;
 }
 /**Previous h1
@@ -221,14 +221,14 @@ ul {
 <!--<img   class="bannerPIC" src="icons/GOING_DIGITAL-banner_1140x110.png"></img>
 <h1>OECD Going Digital project</h1>
 <h2>Making the Digital Transformation Work for Growth and Well-being</h2>-->
-<h1>Visualisation of Going Digital output</h1>
+<h1>Visualisation of the Going Digital Project Outputs</h1>
 </div>
 
 
 
 <div id="toolbar">
 <div class="button active"  id="theme">Theme</div>
-<div class="button " id="committee">Committee </div>
+<div class="button " id="committee">Committee and Bodies </div>
 <div class="button " id="gd">Integrated Policy Framework </div>
 <!--<div class="button " id="project">Project</div>--><!-- previous class was "button right"-->
 </div>
@@ -317,7 +317,7 @@ var simulation = d3.forceSimulation()
     .force("x", d3.forceX(0))
 
 
-var dataLegend=[{name:"Integrated Policy Framework"},{name:"Committee"},{name:"Output"}]
+var dataLegend=[{name:"Integrated Policy Framework"},{name:"Committee and Bodies"},{name:"Output"}]
 
 var nodeLegend = svglegend
   .selectAll("g")
@@ -361,16 +361,37 @@ var nodeLegend = svglegend
         var url="icons/"+key+".svg";
           return url;
       })
-      .attr("x", -radiusLegend/2)
-      .attr("y", -radiusLegend/2)
-      .attr("width", radiusLegend)
-      .attr("height", radiusLegend);
+      .attr("x",  function(d){
+        if (d.name=="Integrated Policy Framework")
+          return -radiusLegend;
+        else
+          return -radiusLegend/2;
+      })
+      .attr("y",function(d){
+        if (d.name=="Integrated Policy Framework")
+          return -radiusLegend;
+        else
+          return -radiusLegend/2;
+      })
+      .attr("width", function(d){
+        if (d.name=="Integrated Policy Framework")
+          return radiusLegend*2
+        else
+          return radiusLegend;
+      })
+      .attr("height",  function(d){
+        if (d.name=="Integrated Policy Framework")
+          return radiusLegend*2
+        else
+          return radiusLegend;
+      });
+
 
 var fakeBackground=svg
     .append("rect")
     .attr("class", "overlay")
     .attr("width", width)
-    .attr("height" ,height);
+    .attr("height" , height);
 
      
 
@@ -507,20 +528,36 @@ d3.tsv("data/data_tot.tsv", function(error, graph) {
   node.append("image")
       .attr("xlink:href", function(d){
         var key=key=d.cat.replace(/[ .,\/#!$%\^&\*;:{}=\-_`~()]/g,"_");
-        var url="icons/"+key+".svg";
+        var url;
+        if(key=="Committee")
+           url="icons/"+"Committee_and_Bodies"+".svg";
+         else 
+           url="icons/"+key+".svg";
           return url;
       })
       .attr("x", function(d){
-        return -radius(d.value)/2;
+        if (d.cat=="Integrated Policy Framework")
+          return -radius(d.value)
+        else
+          return -radius(d.value)/2;
       })
       .attr("y", function(d){
-        return -radius(d.value)/2;
+        if (d.cat=="Integrated Policy Framework")
+          return -radius(d.value)
+        else
+          return -radius(d.value)/2;
       })
       .attr("width", function(d){
-        return radius(d.value);
+        if (d.cat=="Integrated Policy Framework")
+          return 2*radius(d.value)
+        else
+          return radius(d.value);
       })
       .attr("height", function(d){
-        return radius(d.value);
+        if (d.cat=="Integrated Policy Framework")
+          return 2*radius(d.value)
+        else
+          return radius(d.value);
       });
 
 
@@ -747,7 +784,7 @@ function setupButtons() {
           link.style("stroke-opacity", 1);
           link.style("stroke", "#ddd");
 
-          document.getElementById("list").innerHTML = 'Committees';
+          document.getElementById("list").innerHTML = 'Committee and Bodies';
 
           changeNodeSize("committee")
           toplist = d3.select("#list").append("ul").attr("class","navList");

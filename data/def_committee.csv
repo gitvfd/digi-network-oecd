@@ -5,13 +5,13 @@ CCP,Committee on Consumer Policy,no
 CDEP,Committee on Digital Economy Policy,no
 CFA,Committee on Fiscal Affairs,no
 CFE,Working Party on SMEs and Entrepreneurship,yes
-CIIE,Committee on Industry, Innovation, and Entrepreneurship,yes
+CIIE,"Committee on Industry, Innovation, and Entrepreneurship",yes
 CMF,Committee on Financial Markets,no
 CSSP,The Committee on Statistics and Statistical Policy,no
 CSTP,Committee on Scientific and Technological Policy,no
 DAC,Development Assistance Committee,no
 EDPC,Education Policy Committee,no
-ELSAC,Employment, Labour and Social Affairs Committee,no
+ELSAC,"Employment, Labour and Social Affairs Committee",no
 EPC,Economic Policy Committee,no
 EPOC,Environment Policy Committee,yes
 HC,Health Committee,yes
@@ -24,6 +24,6 @@ TC,Trade Committee,no
 TUAC,Trade Union Advisory Committee,yes
 ITF,International Transport Forum,yes
 CERI,Centre for Educational Research and Innovation,no
-CTPA,Centre for Tax Policy and Administration,yes
+CTP,Centre for Tax Policy and Administration,yes
 SGE,General Secretariat,yes
 SSAG,Skills Strategy Advisory Group,no
